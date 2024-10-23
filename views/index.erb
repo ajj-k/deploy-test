@@ -1,0 +1,62 @@
+<%# 
+  ・ヘッダーの部分テンプレート
+  ・page_nameの値でsidebarのアイコンの色変更
+%>
+<%= erb :'header', :locals => {:page_name => @page_name}%>
+
+<main>
+  <%# 
+    ・サイドバーの部分テンプレート
+    ・page_nameの値でsidebarのアイコンの色変更
+  %>
+  <%= erb :'sidebar', :locals => {:page_name => @page_name}%>
+
+  <div class="main-view">
+    <%# 投稿がない時 %>
+    <% if @posts.empty? %>
+      <p class="post-empty-text">新規投稿から写真を投稿しよう！</p>
+    <%# 投稿がある時 %>
+    <% else %>
+      <% @posts.each do |post| %>
+        <div class="post">
+          <div class="post-header">
+            <img src="img/character/<%= post.icon_image %>.png" alt="ユーザーアイコン画像" class="icon-img">
+            <div class="post-header-data">
+              <p class="post-user-name"><%= post.user_name %></p>
+              <div class="post-location">
+                <img src="/img/location.svg" alt="ロケーションアイコン画像">
+                <p><%= post.location %></p>
+              </div>
+            </div>
+            <div class="more-button">
+              <div class="options">
+                <a href="/<%= post.id %>/edit" class="post-edit">編集</a>
+                <form action="/<%= post.id %>/delete" method="post" class="post-delete">
+                  <input type="submit" value="削除">
+                </form>
+              </div>
+              <img src="img/options.svg" alt="オプションアイコン画像">
+            </div>
+          </div>
+          <img src="<%= post.image_url %>" alt="投稿画像" class="post-img">
+          <div class="post-content">
+            <button class="post-like" data-id="<%=post.id%>">
+              <i class="fa-regular fa-heart"></i>
+              <p>「いいね！」<span><%= post.like %></span>件</p>
+            </button>
+            <p class="post-user-name"><%= post.user_name %></p>
+            <p class="post-caption"><%= post.caption %></p>
+            <%# expand-captionクラスの要素は、captionの文末が「...」になる時、jsで自動挿入するので不要 %>
+            <p class="post-date-small"><%= post.updated_at.strftime("%Y/%m/%d") %></p>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</main>
+<%# 非同期での post /:id/like するための設定ファイル %>
+<script src="/js/asyncLike.js"></script>
+<%# 「続きを読む」の設定ファイル %>
+<script src="/js/expandCaption.js"></script>
+<%# 空文字のlocationを削除するための設定ファイル %>
+<script src="/js/hideEmptyLocation.js"></script>
